@@ -1,17 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="style/style.min.css">
+
+    <title>VanillaHN</title>
 </head>
 
 <body>
-    <h1>Hacker News</h1>
-
-    <ol id="result"></ol>
+    <header>
+        <div class="navbar fixed-top navbar-expand navbar-dark bg-primary shadow-sm justify-content-center justify-content-md-between">
+            <a class="navbar-brand" href="#">VanillaHN</a>
+            <nav class="navbar-nav d-none d-md-flex">
+                <a class="nav-item nav-link active" href="#">
+                    Top <span class="sr-only">(current)</span>
+                </a>
+                <a class="nav-item nav-link" href="#">
+                    New
+                </a>
+                <a class="nav-item nav-link" href="#">
+                    Show
+                </a>
+                <a class="nav-item nav-link" href="#">
+                    Ask
+                </a>
+                <a class="nav-item nav-link" href="#">
+                    Job
+                </a>
+            </nav>
+        </div>
+    </header>
+    <nav class="container mt-2 d-block d-md-none">
+        <div class="row">
+            <div class="col">
+                <nav class="nav nav-pills nav-fill">
+                    <a class="nav-item nav-link active" href="#">
+                        Top
+                    </a>
+                    <a class="nav-item nav-link" href="#">
+                        New
+                    </a>
+                    <a class="nav-item nav-link" href="#">
+                        Show
+                    </a>
+                    <a class="nav-item nav-link" href="#">
+                        Ask
+                    </a>
+                    <a class="nav-item nav-link" href="#">
+                        Job
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </nav>
+    <main class="container mt-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <ol>
+                </ol>
+            </div>
+        </div>
+    </main>
+    <nav class="navbar fixed-bottom navbar-expand navbar-light bg-white shadow-sm-top justify-content-center">
+        <nav class="nav">
+            <a class="nav-link disabled" href="#" id="previous-page">
+                Previous
+            </a>
+            <a class="nav-link disabled" href="" id="next-page">
+                Next
+            </a>
+        </nav>
+    </nav>
 
     <script>
         init();
@@ -32,20 +93,21 @@
             xmlhttp.send();
         }
 
-        function applyPagination(topstories) {
-            const page = getPageNumber();
+        function applyPagination(items) {
+            const page = getCurrentPageNumber();
             const pageSize = 30;
 
             const begin = (page - 1) * pageSize;
             const end = page * pageSize;
 
+            document.querySelector("main ol").setAttribute("start", begin + 1)
 
-            document.getElementById("result").setAttribute("start", begin + 1)
+            hasNextPage(items);
 
-            return topstories.slice(begin, end);
+            return items.slice(begin, end);
         }
 
-        function getPageNumber() {
+        function getCurrentPageNumber() {
             let page = 1;
             const urlParams = new URLSearchParams(window.location.search);
 
@@ -58,21 +120,58 @@
             return page;
         }
 
-        function constructItems(topstories) {
-            topstories.forEach(id => {
+        function hasNextPage(items) {
+            const nextPageElement = document.getElementById("next-page");
+            console.log(getCurrentPageNumber());
+            if (getCurrentPageNumber > 1) {
+                const nextPageNumber = getCurrentPageNumber - 1;
+                console.log("next page: " + nextPageNumber);
+                nextPageElement.classList.remove("disabled");
+                nextPageElement.setAttribute("href", "?" + nextPageNumber);
+            }
+        }
+
+        function constructItems(items) {
+            items.forEach(id => {
                 const xmlhttp = new XMLHttpRequest();
 
                 xmlhttp.onreadystatechange = function () {
                     if (this.readyState == 4 && this.status == 200) {
                         const json = JSON.parse(this.response);
-                        const title = document.createTextNode(json.title);
-                        document.getElementById(id).appendChild(title);
+
+                        const h2 = document.createElement("h2");
+                        h2.classList.add("mb-1");
+
+                        const a = document.createElement("a");
+                        a.href = json.url;
+                        a.classList.add("text-body");
+                        a.appendChild(document.createTextNode(json.title));
+                        h2.appendChild(a);
+
+                        const p = document.createElement("p");
+                        p.classList.add("small", "text-muted");
+                        p.appendChild(
+                            document.createTextNode(
+                                json.score
+                                + " points by "
+                                + json.by
+                                + " | "
+                                + json.descendants
+                                + " comments"));
+
+                        const article = document.getElementById(id);
+                        article.parentElement.classList.remove("loading", "mb-3");
+                        article.appendChild(h2);
+                        article.appendChild(p);
                     }
                 };
 
                 const li = document.createElement("li");
-                li.setAttribute("id", id);
-                document.getElementById("result").appendChild(li);
+                li.classList.add("loading", "mb-3");
+                const article = document.createElement("article");
+                article.id = id;
+                li.appendChild(article);
+                document.querySelector("main ol").appendChild(li);
 
                 xmlhttp.open("GET", "https://hacker-news.firebaseio.com/v0/item/" + id + ".json", true);
                 xmlhttp.send();

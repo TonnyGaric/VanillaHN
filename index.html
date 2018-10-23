@@ -12,21 +12,23 @@
 <body>
     <header>
         <div class="navbar fixed-top navbar-expand navbar-dark bg-primary shadow-sm justify-content-center justify-content-md-between">
-            <a class="navbar-brand" href="#">VanillaHN</a>
+            <a class="navbar-brand nav-top" href="?page=top">
+                VanillaHN
+            </a>
             <nav class="navbar-nav d-none d-md-flex">
-                <a class="nav-item nav-link active" href="#">
-                    Top <span class="sr-only">(current)</span>
+                <a class="nav-item nav-link nav-top" href="?page=top">
+                    Top
                 </a>
-                <a class="nav-item nav-link" href="#">
+                <a class="nav-item nav-link nav-new" href="?page=new">
                     New
                 </a>
-                <a class="nav-item nav-link" href="#">
+                <a class="nav-item nav-link nav-show" href="?page=show">
                     Show
                 </a>
-                <a class="nav-item nav-link" href="#">
+                <a class="nav-item nav-link nav-ask" href="?page=ask">
                     Ask
                 </a>
-                <a class="nav-item nav-link" href="#">
+                <a class="nav-item nav-link nav-job" href="?page=job">
                     Job
                 </a>
             </nav>
@@ -36,19 +38,19 @@
         <div class="row">
             <div class="col">
                 <nav class="nav nav-pills nav-fill">
-                    <a class="nav-item nav-link active" href="#">
+                    <a class="nav-item nav-link nav-top" href="?page=top">
                         Top
                     </a>
-                    <a class="nav-item nav-link" href="#">
+                    <a class="nav-item nav-link nav-new" href="?page=new">
                         New
                     </a>
-                    <a class="nav-item nav-link" href="#">
+                    <a class="nav-item nav-link nav-show" href="?page=show">
                         Show
                     </a>
-                    <a class="nav-item nav-link" href="#">
+                    <a class="nav-item nav-link nav-ask" href="?page=ask">
                         Ask
                     </a>
-                    <a class="nav-item nav-link" href="#">
+                    <a class="nav-item nav-link nav-job" href="?page=job">
                         Job
                     </a>
                 </nav>
@@ -57,35 +59,92 @@
     </nav>
     <main class="container mt-3">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <ol>
-                </ol>
+            <div class="col-lg-8" id="result">
+                <img src="loading.gif" class="mx-auto d-block my-5" alt="Loading">
+            </div>
+            <div class="col-lg-8 text-center">
+                <hr>
+                <p class="small text-muted">
+                    <a href="" class="text-muted">About</a> | <a href="" class="text-muted">View on GitHub</a> |
+                    Created by <a href="https://tonnygaric.com/" class="text-muted">Tonny
+                        Garić</a>
+                </p>
             </div>
         </div>
     </main>
     <nav class="navbar fixed-bottom navbar-expand navbar-light bg-white shadow-sm-top justify-content-center">
         <nav class="nav">
-            <a class="nav-link disabled" href="#" id="previous-page">
+            <a class="nav-link disabled" id="prev-page">
                 Previous
             </a>
-            <a class="nav-link disabled" href="" id="next-page">
+            <a class="nav-link disabled" id="next-page">
                 Next
             </a>
         </nav>
     </nav>
 
     <script>
-        init();
+        initialize();
+        const pageSize = 30;
+        var pageName;
 
-        function init() {
+        function initialize() {
+            const topButtons = document.getElementsByClassName("nav-top");
+            const newButtons = document.getElementsByClassName("nav-new");
+            const showButtons = document.getElementsByClassName("nav-show");
+            const navButtons = document.getElementsByClassName("nav-ask");
+            const jobButtons = document.getElementsByClassName("nav-job");
+
+            const urlParams = new URLSearchParams(window.location.search);
+
+            switch (urlParams.get("page")) {
+                case "new":
+                    pageName = "new";
+                    initNewPage();
+                    break;
+                case "show":
+                    pageName = "show";
+                    initShowPage();
+                    break;
+                case "ask":
+                    pageName = "ask";
+                    initAskPage();
+                    break;
+                case "job":
+                    pageName = "job";
+                    initJobPage();
+                    break;
+                case "user":
+                    pageName = "user";
+                    initUserPage();
+                    break;
+                case "item":
+                    pageName = "item";
+                    initItemPage();
+                    break;
+                default:
+                    pageName = "top";
+                    initTopPage();
+            }
+        }
+
+        function initTopPage() {
+            console.log("Initializing top page");
+
+            makeNavButtonsActive();
+
             const xmlhttp = new XMLHttpRequest();
+            const result = document.getElementById("result");
 
             // First, retrieve all ids of top stories
             xmlhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
-                    let topstories = JSON.parse(this.responseText);
-                    topstories = applyPagination(topstories);
-                    constructItems(topstories);
+                    let items = JSON.parse(this.responseText);
+                    result.innerHTML = "";
+                    const ol = document.createElement("ol");
+                    result.appendChild(ol);
+                    items = applyPagination(items);
+                    constructItems(items);
                 }
             };
 
@@ -93,21 +152,105 @@
             xmlhttp.send();
         }
 
+        function initNewPage() {
+            console.log("Initializing new page");
+
+            makeNavButtonsActive();
+
+            const xmlhttp = new XMLHttpRequest();
+            const result = document.getElementById("result");
+
+            // First, retrieve all ids of top stories
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let items = JSON.parse(this.responseText);
+                    result.innerHTML = "";
+                    const ol = document.createElement("ol");
+                    result.appendChild(ol);
+                    items = applyPagination(items);
+                    constructItems(items);
+                }
+            };
+
+            xmlhttp.open("GET", "https://hacker-news.firebaseio.com/v0/newstories.json", true);
+            xmlhttp.send();
+        }
+
+        function initShowPage() {
+            console.log("Initializing show page");
+            makeNavButtonsActive();
+        }
+
+        function initAskPage() {
+            console.log("Initializing ask page");
+            makeNavButtonsActive();
+        }
+
+        function initJobPage() {
+            console.log("Initializing job page");
+            makeNavButtonsActive();
+        }
+
+        function initUserPage() {
+            console.log("Initializing user page");
+            makeNavButtonsActive();
+        }
+
+        function initItemPage() {
+            console.log("Initializing item page");
+            makeNavButtonsActive();
+        }
+
+        function makeNavButtonsActive() {
+            console.log("Making nav buttons of page [" + pageName + "] active");
+            const buttons = document.getElementsByClassName("nav-" + pageName);
+
+            Array.prototype.forEach.call(buttons, function (button) {
+                button.classList.add("active");
+            });
+        }
+
         function applyPagination(items) {
-            const page = getCurrentPageNumber();
-            const pageSize = 30;
+            console.log("Applying pagination");
 
-            const begin = (page - 1) * pageSize;
-            const end = page * pageSize;
+            const currentPage = getCurrentPageNumber(items);
+            const begin = (currentPage - 1) * pageSize;
+            const end = currentPage * pageSize;
 
-            document.querySelector("main ol").setAttribute("start", begin + 1)
+            document.querySelector("#result > ol").setAttribute("start", begin + 1);
 
-            hasNextPage(items);
+            // Apply logic for previous button
+            const prevPageButton = document.getElementById("prev-page");
+            const hasPrevPage = items.length - (pageSize * currentPage) > 0;
+            const prevPageNumber = parseInt(currentPage) + 1;
+            console.log("Has previous page [" + hasPrevPage + "]");
+            if (hasPrevPage) {
+                console.log("Prev page number is [" + prevPageNumber + "]");
+                prevPageButton.classList.remove("disabled");
+                prevPageButton.href = "?page=" + pageName + "&p=" + prevPageNumber;
+            } else {
+                prevPageButton.classList.add("disabled");
+                prevPageButton.removeAttribute("href");
+            }
+
+            // Apply logic for next button
+            const nextPageButton = document.getElementById("next-page");
+            const hasNextPage = currentPage > 1;
+            const nextPageNumber = parseInt(currentPage) - 1;
+            console.log("Has next page [" + hasNextPage + "]");
+            if (hasNextPage) {
+                console.log("Next page number is [" + nextPageNumber + "]");
+                nextPageButton.classList.remove("disabled");
+                nextPageButton.href = "?page=" + pageName + "&p=" + nextPageNumber;
+            } else {
+                nextPageButton.classList.add("disabled");
+                nextPageButton.removeAttribute("href");
+            }
 
             return items.slice(begin, end);
         }
 
-        function getCurrentPageNumber() {
+        function getCurrentPageNumber(items) {
             let page = 1;
             const urlParams = new URLSearchParams(window.location.search);
 
@@ -115,20 +258,16 @@
                 page = urlParams.get("p");
             }
 
-            if (page <= 0) page = 1;
+            // Current page number cannot be less than or equal to 0.
+            // AND cannot be greater than the maximum number of pages.
+            const maxPages = Math.ceil(items.length / pageSize);
+            if (page <= 0 || page > maxPages) {
+                page = 1;
+            }
+
+            console.log("Current page number is [" + page + "]")
 
             return page;
-        }
-
-        function hasNextPage(items) {
-            const nextPageElement = document.getElementById("next-page");
-            console.log(getCurrentPageNumber());
-            if (getCurrentPageNumber > 1) {
-                const nextPageNumber = getCurrentPageNumber - 1;
-                console.log("next page: " + nextPageNumber);
-                nextPageElement.classList.remove("disabled");
-                nextPageElement.setAttribute("href", "?" + nextPageNumber);
-            }
         }
 
         function constructItems(items) {
@@ -171,7 +310,7 @@
                 const article = document.createElement("article");
                 article.id = id;
                 li.appendChild(article);
-                document.querySelector("main ol").appendChild(li);
+                document.querySelector("#result > ol").appendChild(li);
 
                 xmlhttp.open("GET", "https://hacker-news.firebaseio.com/v0/item/" + id + ".json", true);
                 xmlhttp.send();

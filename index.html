@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Hacker News</h1>
+
+    <ol id="result"></ol>
+
+    <script>
+        init();
+
+        function init() {
+            const xmlhttp = new XMLHttpRequest();
+
+            // First, retrieve all ids of top stories
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let topstories = JSON.parse(this.responseText);
+                    topstories = applyPagination(topstories);
+                    constructItems(topstories);
+                }
+            };
+
+            xmlhttp.open("GET", "https://hacker-news.firebaseio.com/v0/topstories.json", true);
+            xmlhttp.send();
+        }
+
+        function applyPagination(topstories) {
+            const page = getPageNumber();
+            const pageSize = 30;
+
+            const begin = (page - 1) * pageSize;
+            const end = page * pageSize;
+
+
+            document.getElementById("result").setAttribute("start", begin + 1)
+
+            return topstories.slice(begin, end);
+        }
+
+        function getPageNumber() {
+            let page = 1;
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.has("p") && !isNaN(urlParams.get("p"))) {
+                page = urlParams.get("p");
+            }
+
+            if (page <= 0) page = 1;
+
+            return page;
+        }
+
+        function constructItems(topstories) {
+            topstories.forEach(id => {
+                const xmlhttp = new XMLHttpRequest();
+
+                xmlhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        const json = JSON.parse(this.response);
+                        const title = document.createTextNode(json.title);
+                        document.getElementById(id).appendChild(title);
+                    }
+                };
+
+                const li = document.createElement("li");
+                li.setAttribute("id", id);
+                document.getElementById("result").appendChild(li);
+
+                xmlhttp.open("GET", "https://hacker-news.firebaseio.com/v0/item/" + id + ".json", true);
+                xmlhttp.send();
+            });
+        }
+    </script>
+</body>
+
+</html>

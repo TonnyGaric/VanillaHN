@@ -3,7 +3,7 @@ VanillaHN is a simple [Hacker News](https://news.ycombinator.com/) client, built
 
 The goal of this project is to become a [Baseline PWA](https://developers.google.com/web/progressive-web-apps/checklist#baseline), by using only plain (vanilla) JavaScript.
 
-Onces that is achieved, the goal is to take it a step further and become an [Exemplary PWA](https://developers.google.com/web/progressive-web-apps/checklist#exemplary), again, by using only plain (vanilla) JavaScript.
+Once that is achieved, the goal is to take it a step further and become an [Exemplary PWA](https://developers.google.com/web/progressive-web-apps/checklist#exemplary), again, by using only plain (vanilla) JavaScript.
 
 ![](https://tonnygaric.com/content/3-projects/vanillahn/vanillahn-cover.png)
 

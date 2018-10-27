@@ -34,7 +34,7 @@ https://github.com/TonnyGaric/VanillaHN.git
 - Open `index.html` in your webbrowser.
 
 ## Contributing
-Feel free to contribute to VanillaHN. Please read [VanillaHN Contributor Guidelines](https://github.com/TonnyGaric/VanillaHN/blob/master/CONTRIBUTING.md) before contributing.
+Feel free to contribute to VanillaHN. Be sure to review the [contributing guidelines](https://github.com/TonnyGaric/VanillaHN/blob/master/CONTRIBUTING.md) and [code of conduct](https://github.com/TonnyGaric/VanillaHN/blob/master/CODE_OF_CONDUCT.md).
 
 ## Contributors
 Names of contributers should be added to this file like so:

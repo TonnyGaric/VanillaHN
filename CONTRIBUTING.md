@@ -1,4 +1,4 @@
-# VanillaHN Contributor Guideliens
+# VanillaHN Contributor Guidelines
 First off, thanks for taking time to contribute! 🎉 👍
 
 The following is a set of guidelines for contributing to VainillaHN. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a [new GitHub Issue](https://github.com/TonnyGaric/VanillaHN/issues/new).

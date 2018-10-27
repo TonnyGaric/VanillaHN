@@ -3,6 +3,9 @@ First off, thanks for taking time to contribute! 🎉 👍
 
 The following is a set of guidelines for contributing to VainillaHN. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a [new GitHub Issue](https://github.com/TonnyGaric/VanillaHN/issues/new).
 
+## Code of Conduct
+This project and everyone contributing to it is governed by the [VanillaHN Code of Conduct](https://github.com/TonnyGaric/VanillaHN/blob/master/CODE_OF_CONDUCT.md). By contributing, you are expected to uphold this code.
+
 ## Prerequisites
 Before making a contribution, it is important to make sure that the change you wish to make and the approach you wish to take will likely be accepted, otherwise you may end up doing a lot of work for nothing.  If the change is only small, for example, if it's a documentation change or a simple bugfix, then it's likely to be accepted with no prior discussion.  However, new features, or bigger refactorings should first be discussed in a [GitHub issue](https://github.com/TonnyGaric/VanillaHN/issues).
 

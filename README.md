@@ -39,12 +39,12 @@ Feel free to contribute to VanillaHN. Be sure to review the [contributing guidel
 ## Contributors
 Names of contributers should be added to this file like so:
 ```
-- @githubusername - email address
+- [@github-username](url-to-github-profile) - email address
 ```
 
 *Please keep this list sorted.*
 
-- @TonnyGaric - hello@tonnygaric.com
+- [@TonnyGaric](https://github.com/TonnyGaric) - hello@tonnygaric.com
 
 ## Versioning
 We use [SemVer](https://semver.org/) for versioning. For available versions, see the [tags in this repository](https://github.com/TonnyGaric/VanillaHN/tags).

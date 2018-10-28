@@ -13,7 +13,7 @@ Once that is achieved, the goal is to take it a step further and become an [Exem
 - [Git](https://git-scm.com/)—if you would like to contribute.
 
 ### 1. Clone
-You can clone this repositor using SSH or HTTPS.
+You can clone this repository using SSH or HTTPS.
 
 #### Use SSH
 Use an SSH key and passphrase from account.

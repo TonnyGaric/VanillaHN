@@ -187,7 +187,8 @@ function initUserPage() {
 			// undefined. Because null == undefined is true, the code
 			// below will catch both null and undefined.
 			if (json.about != null) {
-				aboutDd.appendChild(document.createTextNode(json.about));
+				// Hacker News renders about as HTML, so we will too.
+				aboutDd.innerHTML = json.about;
 				dl.appendChild(aboutDd);
 			}
 

@@ -38,68 +38,26 @@ function initialize() {
 
 function initTopPage() {
 	console.log("Initializing top page");
-
 	makeNavButtonsActive();
-
-	const xmlhttp = new XMLHttpRequest();
-	const result = document.getElementById("result");
-
-	// First, retrieve all ids of top stories
-	xmlhttp.onreadystatechange = function() {
-    	if (this.readyState == 4 && this.status == 200) {
-			let items = JSON.parse(this.responseText);
-			result.innerHTML = "";
-			const ol = document.createElement("ol");
-			result.appendChild(ol);
-			items = applyPagination(items);
-			constructItems(items);
-   	 	}
-  	};
-
-  	xmlhttp.open(
-		"GET",
-		"https://hacker-news.firebaseio.com/v0/topstories.json",
-		true
-	);
-	xmlhttp.send();
+	constructStories();
 }
 
 function initNewPage() {
 	console.log("Initializing new page");
-
 	makeNavButtonsActive();
-
-	const xmlhttp = new XMLHttpRequest();
-	const result = document.getElementById("result");
-
-	// First, retrieve all ids of top stories
-	xmlhttp.onreadystatechange = function() {
-    	if (this.readyState == 4 && this.status == 200) {
-			let items = JSON.parse(this.responseText);
-			result.innerHTML = "";
-			const ol = document.createElement("ol");
-			result.appendChild(ol);
-			items = applyPagination(items);
-			constructItems(items);
-    	}
-  	};
-
-  	xmlhttp.open(
-		"GET",
-		"https://hacker-news.firebaseio.com/v0/newstories.json",
-		true
-	);
-	xmlhttp.send();
+	constructStories();
 }
 
 function initShowPage() {
 	console.log("Initializing show page");
 	makeNavButtonsActive();
+	constructStories();
 }
 
 function initAskPage() {
 	console.log("Initializing ask page");
 	makeNavButtonsActive();
+	constructStories();
 }
 
 function initJobPage() {
@@ -282,6 +240,30 @@ function getCurrentPageNumber(items) {
 	console.log("Current page number is [" + page + "]");
 
 	return page;
+}
+
+function constructStories() {
+	const xmlhttp = new XMLHttpRequest();
+	const result = document.getElementById("result");
+
+	// First, retrieve all ids of stories of this page.
+	xmlhttp.onreadystatechange = function() {
+    	if (this.readyState == 4 && this.status == 200) {
+			let items = JSON.parse(this.responseText);
+			result.innerHTML = "";
+			const ol = document.createElement("ol");
+			result.appendChild(ol);
+			items = applyPagination(items);
+			constructItems(items);
+    	}
+  	};
+
+  	xmlhttp.open(
+		"GET",
+		"https://hacker-news.firebaseio.com/v0/" + pageName + "stories.json",
+		true
+	);
+	xmlhttp.send();
 }
 
 function constructItems(items) {

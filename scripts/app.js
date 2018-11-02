@@ -3,15 +3,9 @@ const pageSize = 30;
 var pageName;
 
 function initialize() {
-  const topButtons = document.getElementsByClassName("nav-top");
-  const newButtons = document.getElementsByClassName("nav-new");
-  const showButtons = document.getElementsByClassName("nav-show");
-  const navButtons = document.getElementsByClassName("nav-ask");
-  const jobButtons = document.getElementsByClassName("nav-job");
-
   const urlParams = new URLSearchParams(window.location.search);
 
-  switch (urlParams.get("page")) {
+  switch (urlParams.get("pageName")) {
     case "new":
       pageName = "new";
       initNewPage();
@@ -115,7 +109,100 @@ function initJobPage() {
 
 function initUserPage() {
   console.log("Initializing user page");
+
+  // User page does not need pagination,
+  // so we can safely remove it.
+  removePagination();
+
   makeNavButtonsActive();
+
+  const urlParams = new URLSearchParams(window.location.search);
+
+  // Verify if there is a param id present.
+  // If not, redirect to index, because
+  // we cannot show a user, without a
+  // user id.
+  if (!urlParams.has("id")) {
+    window.location.href = window.location.pathname;
+  }
+
+  // We are sure we have a user id in the params.
+  userId = urlParams.get("id");
+
+  const xmlhttp = new XMLHttpRequest();
+  const result = document.getElementById("result");
+
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      const json = JSON.parse(this.responseText);
+
+      result.innerHTML = "";
+
+      // If user is not found, return some feedback to user.
+      if (json == null) {
+        result.appendChild(document.createTextNode("No such user."));
+        return;
+      }
+
+      const dl = document.createElement("dl");
+      result.appendChild(dl);
+
+      // Add username
+      const usernameDt = document.createElement("dt");
+      usernameDt.appendChild(document.createTextNode("Username"));
+      dl.appendChild(usernameDt);
+
+      const usernameDd = document.createElement("dd");
+      usernameDd.appendChild(document.createTextNode(json.id));
+      dl.appendChild(usernameDd);
+
+      // Add created datetime
+      const createdDt = document.createElement("dt");
+      createdDt.appendChild(document.createTextNode("Created"));
+      dl.appendChild(createdDt);
+
+      const createdDd = document.createElement("dd");
+      createdDd.appendChild(document.createTextNode(json.created));
+      dl.appendChild(createdDd);
+
+      // Add karma
+      const karmaDt = document.createElement("dt");
+      karmaDt.appendChild(document.createTextNode("Karma"));
+      dl.appendChild(karmaDt);
+
+      const karmaDd = document.createElement("dd");
+      karmaDd.appendChild(document.createTextNode(json.karma));
+      dl.appendChild(karmaDd);
+
+      // about
+      const aboutDt = document.createElement("dt");
+      aboutDt.appendChild(document.createTextNode("About"));
+      dl.appendChild(aboutDt);
+
+      // If user did not provide an about text, Hacker News shows
+      // "About" without any text. See user varal7 for example.
+      // We will do the same.
+      const aboutDd = document.createElement("dd");
+      // If user did not provide an about text, json.about will be
+      // undefined. Because null == undefined is true, the code
+      // below will catch both null and undefined.
+      if (json.about != null) {
+        aboutDd.appendChild(document.createTextNode(json.about));
+        dl.appendChild(aboutDd);
+      }
+
+      // TODO: add submissions URL
+      // TODO: add comments URL
+      // TODO: add favorites URL
+    }
+  };
+
+  xmlhttp.open(
+    "GET",
+    "https://hacker-news.firebaseio.com/v0/user/" + userId + ".json",
+    true
+  );
+  xmlhttp.send();
 }
 
 function initItemPage() {
@@ -130,6 +217,10 @@ function makeNavButtonsActive() {
   Array.prototype.forEach.call(buttons, function(button) {
     button.classList.add("active");
   });
+}
+
+function removePagination() {
+  document.getElementById("pagination").remove();
 }
 
 function applyPagination(items) {
@@ -149,7 +240,7 @@ function applyPagination(items) {
   if (hasPrevPage) {
     console.log("Prev page number is [" + prevPageNumber + "]");
     prevPageButton.classList.remove("disabled");
-    prevPageButton.href = "?page=" + pageName + "&p=" + prevPageNumber;
+    prevPageButton.href = "?pageName=" + pageName + "&p=" + prevPageNumber;
   } else {
     prevPageButton.classList.add("disabled");
     prevPageButton.removeAttribute("href");
@@ -163,7 +254,7 @@ function applyPagination(items) {
   if (hasNextPage) {
     console.log("Next page number is [" + nextPageNumber + "]");
     nextPageButton.classList.remove("disabled");
-    nextPageButton.href = "?page=" + pageName + "&p=" + nextPageNumber;
+    nextPageButton.href = "?pageName=" + pageName + "&p=" + nextPageNumber;
   } else {
     nextPageButton.classList.add("disabled");
     nextPageButton.removeAttribute("href");
@@ -211,15 +302,16 @@ function constructItems(items) {
 
         const p = document.createElement("p");
         p.classList.add("small", "text-muted");
+
+        const byAnchor = document.createElement("a");
+        byAnchor.href = "?pageName=user&id=" + json.by;
+        byAnchor.classList.add("text-muted");
+        byAnchor.appendChild(document.createTextNode(json.by));
+
+        p.appendChild(document.createTextNode(json.score + " points by "));
+        p.appendChild(byAnchor);
         p.appendChild(
-          document.createTextNode(
-            json.score +
-              " points by " +
-              json.by +
-              " | " +
-              json.descendants +
-              " comments"
-          )
+          document.createTextNode(" | " + json.descendants + " comments")
         );
 
         const article = document.getElementById(id);

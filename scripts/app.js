@@ -295,11 +295,11 @@ function constructItems(items) {
 				const h2 = document.createElement("h2");
 				h2.classList.add("mb-1");
 
-				const a = document.createElement("a");
-				a.href = json.url;
-				a.classList.add("text-body");
-				a.appendChild(document.createTextNode(json.title));
-				h2.appendChild(a);
+				const urlAnchor = document.createElement("a");
+				urlAnchor.href = json.url;
+				urlAnchor.classList.add("text-body");
+				urlAnchor.appendChild(document.createTextNode(json.title));
+				h2.appendChild(urlAnchor);
 
 				const p = document.createElement("p");
 				p.classList.add("small", "text-muted");

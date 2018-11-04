@@ -507,10 +507,29 @@ function constructItems(items) {
 		xmlhttp.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
 				const json = JSON.parse(this.response);
-
+				const article = document.getElementById(id);
 				const h2 = document.createElement("h2");
-				h2.classList.add("mb-1");
+				
+				// For some reason, json cann be null. To
+				// prevent a TypeError further in this if-
+				// statement, let us check if json is null.
+				// If it is null, show some feedback to user.
+				// See: https://github.com/TonnyGaric/VanillaHN/issues/3
+				if (json == null) {
+					h2.classList.add("text-danger");
+					h2.appendChild(document.createTextNode("Sorry, failed to load this item. Try refreshing the page."));
+					// Before appending the h2 to article,
+					// remove the class loading, because we
+					// are not loading any more.
+					article.parentElement.classList.remove("loading");
+					
+					article.appendChild(h2);
 
+					return;
+				}
+
+				h2.classList.add("mb-1");
+				
 				const urlAnchor = document.createElement("a");
 				// If this item does not have a url, this means
 				// that we must use the "item" page with the id
@@ -542,8 +561,6 @@ function constructItems(items) {
 				p.appendChild(byAnchor);
 				p.appendChild(document.createTextNode(" | "));
 				p.appendChild(commentsAnchor);
-
-				const article = document.getElementById(id);
 
 				// Before appending the h2 and p element to article,
 				// remove the classes loading and mb-3. Because we

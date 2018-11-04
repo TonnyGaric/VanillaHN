@@ -16,7 +16,7 @@ Once that is achieved, the goal is to take it a step further and become an [Exem
 You can clone this repository using SSH or HTTPS.
 
 #### Use SSH
-Use an SSH key and passphrase from account.
+Use an SSH key and passphrase from your account.
 ```
 git@github.com:TonnyGaric/VanillaHN.git
 ```
@@ -32,6 +32,8 @@ https://github.com/TonnyGaric/VanillaHN.git
 
 ### 2. Running
 - Open `index.html` in your webbrowser.
+
+Note that you must enable JavaScript in your webbrowser. If for what ever reason it is not, and you do not know how to enable it, read and follow the instructions from [this website](https://www.enable-javascript.com/).
 
 ## Contributing
 Feel free to contribute to VanillaHN. Be sure to review the [contributing guidelines](https://github.com/TonnyGaric/VanillaHN/blob/master/CONTRIBUTING.md) and [code of conduct](https://github.com/TonnyGaric/VanillaHN/blob/master/CODE_OF_CONDUCT.md).

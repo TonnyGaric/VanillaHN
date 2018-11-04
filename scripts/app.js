@@ -41,7 +41,7 @@ function initialize() {
   	const urlParams = new URLSearchParams(window.location.search);
 
 	// If url param "pageName" is not present or
-	// if it is not a real page, and the default
+	// if it is not a real page, the default
 	// "top" will be used.
   	switch (urlParams.get("pageName")) {
 		case "new":
@@ -64,6 +64,10 @@ function initialize() {
 			pageName = "user";
 			initUserPage();
 			break;
+		case "best":
+			pageName = "best";
+			initBestPage();
+			break;
 		case "item":
 			// Note that Hacker News does not have
 			// a page named "item". However, we use
@@ -80,6 +84,11 @@ function initialize() {
 /**
  * Initializes "top" page, by calling makeNavButtonsActive()
  * and constructStories().
+ * 
+ * Note that Hacker News calls this page also "News".
+ * 
+ * See https://news.ycombinator.com/news for the original
+ * Hacker News new page.
  */
 function initTopPage() {
 	console.log("Initializing top page");
@@ -90,6 +99,11 @@ function initTopPage() {
 /**
  * Initializes "new" page, by calling makeNavButtonsActive()
  * and constructStories().
+ * 
+ * Note that Hacker News calls this page also "Newest".
+ * 
+ * See https://news.ycombinator.com/newest for the original
+ * Hacker News new page.
  */
 function initNewPage() {
 	console.log("Initializing new page");
@@ -100,6 +114,9 @@ function initNewPage() {
 /**
  * Initializes "show" page, by calling makeNavButtonsActive()
  * and constructStories().
+ * 
+ * See https://news.ycombinator.com/show for the original
+ * Hacker News show page.
  */
 function initShowPage() {
 	console.log("Initializing show page");
@@ -110,6 +127,9 @@ function initShowPage() {
 /**
  * Initializes "ask" page, by calling makeNavButtonsActive()
  * and constructStories().
+ * 
+ * See https://news.ycombinator.com/ask for the original
+ * Hacker News ask page.
  */
 function initAskPage() {
 	console.log("Initializing ask page");
@@ -119,12 +139,18 @@ function initAskPage() {
 
 /**
  * Initializes "job" page, by calling makeNavButtonsActive().
+ * 
+ * See https://news.ycombinator.com/jobs for the original
+ * Hacker News job page.
  */
 function initJobPage() {
 	console.log("Initializing job page");
 	makeNavButtonsActive();
+
+	// TODO: implement logic to construct job page.
 }
 
+// TODO: document this method
 function initUserPage() {
   	console.log("Initializing user page");
 
@@ -150,16 +176,19 @@ function initUserPage() {
 	userId = urlParams.get("id");
 
 	const xmlhttp = new XMLHttpRequest();
-	const result = document.getElementById("result");
-
+	
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			const json = JSON.parse(this.responseText);
+			const result = document.getElementById("result");
 
 			result.innerHTML = "";
 
 			// If user is not found, return some feedback to user.
 			if (json == null) {
+				// Return the same feedback text as Hacker News.
+				// See for example:
+				// https://news.ycombinator.com/user?id=tonnygaric
 				result.appendChild(document.createTextNode("No such user."));
 				return;
 			}
@@ -203,6 +232,7 @@ function initUserPage() {
 			// "About" without any text. See user varal7 for example.
 			// We will do the same.
 			const aboutDd = document.createElement("dd");
+
 			// If user did not provide an about text, json.about will be
 			// undefined. Because null == undefined is true, the code
 			// below will catch both null and undefined.
@@ -226,6 +256,7 @@ function initUserPage() {
 	xmlhttp.send();
 }
 
+// TODO: document this method
 function initItemPage() {
 	console.log("Initializing item page");
 	
@@ -233,20 +264,53 @@ function initItemPage() {
 
 	const urlParams = new URLSearchParams(window.location.search);
 
-	// Verify if there is a param id present.
-	// If not, redirect to index, because
-	// we cannot show comments, without
-	// an item id.
+	// Verify if there is a param id present. If not,
+	// redirect to index, because we cannot show
+	// comments, without an item id.
 	if (!urlParams.has("id")) {
 		window.location.href = window.location.pathname;
 	}
 
 	// We are sure we have an item id in the params.
 	itemId = urlParams.get("id");
+
+	// TODO: retrieve all comments an construct HTML for it
 }
 
+/**
+ * Initializes "best" page, by calling constructStories().
+ * 
+ * Since Hacker News does not include "Best" in their
+ * navigation, we also do not include it. However,
+ * if you open the Best page on Hacker News,
+ * it is added to their navigation. Nevertheless,
+ * we chose not to include it.
+ * 
+ * See https://news.ycombinator.com/best for the original
+ * best page of Hacker News.
+ */
+function initBestPage() {
+	console.log("Initializing best page");
+
+	// best page is not included in the navbars,
+	// because Hackers News also does not include
+	// it. Therefore, we do not have any navbar
+	// buttons to add the active class to.
+
+	constructStories();
+}
+
+/**
+ * Adds the class "active" to all elements with
+ * the class "nav-" + pageName.
+ * 
+ * Note that there are two navbars:
+ * - one for screens medium or larger;
+ * - one for small screens.
+ */
 function makeNavButtonsActive() {
 	console.log("Making nav buttons of page [" + pageName + "] active");
+
 	const buttons = document.getElementsByClassName("nav-" + pageName);
 
 	Array.prototype.forEach.call(buttons, function(button) {
@@ -289,6 +353,7 @@ function getCurrentPageNumber(items) {
 	return page;
 }
 
+// TODO: document this method
 function applyPagination(items) {
 	console.log("Applying pagination");
 
@@ -340,12 +405,21 @@ function applyPagination(items) {
 		nextPageButton.href = "?pageName=" + pageName + "&p=" + nextPageNumber;
 	}
 
+	// First index of array items, for this page.
 	const begin = (currentPage - 1) * pageSize;
+
+	// Last index + 1 of array items, for this page.
+	// Note that this one is not included when
+	// calling slice()  with end as second
+	// argument.
 	const end = currentPage * pageSize;
 
 	// Specify the start value for numbering the
 	// individual list items. See:
 	// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol#Attributes
+	//
+	// Because an array starts at index 0, we must
+	// add 1 to begin.
 	document.querySelector("#result > ol").setAttribute("start", begin + 1);
 
 	// Return a shallow copy of a portion of the array items,
@@ -356,11 +430,27 @@ function applyPagination(items) {
 	return items.slice(begin, end);
 }
 
+/**
+ * Retrieves an array with ids of all items of this page,
+ * then creates an ol element and appends it to the
+ * element with id "result", then calls applyPagination()
+ * and lastly calls constructItems().
+ * 
+ * This method can only be used for the following pages:
+ * new, top, best, ask, show and job.
+ * 
+ * See https://github.com/HackerNews/API#new-top-and-best-stories
+ * for Hacker News' API documententation for new, top
+ * 
+ * See https://github.com/HackerNews/API#ask-show-and-job-stories
+ * for Hacker News' API documentation for ask, show and
+ * job stories.
+ */
 function constructStories() {
 	const xmlhttp = new XMLHttpRequest();
 	const result = document.getElementById("result");
 
-	// First, retrieve all ids of the  stories of this page.
+	// First, retrieve all ids of the stories of this page.
 	xmlhttp.onreadystatechange = function() {
     	if (this.readyState == 4 && this.status == 200) {
 			let items = JSON.parse(this.responseText);
@@ -373,7 +463,8 @@ function constructStories() {
 			const ol = document.createElement("ol");
 			result.appendChild(ol);
 			
-			// Apply pagination to Array, before we call constructItems().
+			// Apply pagination to Array items, before we
+			// use it as an argument for constructItems().
 			items = applyPagination(items);
 			constructItems(items);
     	}
@@ -425,11 +516,11 @@ function constructItems(items) {
 				// that we must use the "item" page with the id
 				// of this item, for the href attribute.
 				if (json.url == null) {
-					// This item can be for example a comment or a user.
 					urlAnchor.href = "?pageName=item&id=" + json.id;
 				} else {
 					urlAnchor.href = json.url;
 				}
+
 				urlAnchor.classList.add("text-body");
 				urlAnchor.appendChild(document.createTextNode(json.title));
 				h2.appendChild(urlAnchor);
@@ -465,11 +556,19 @@ function constructItems(items) {
 			}
 		};
 
+		// Before we get any response on the GET request,
+		// immediatly create a li element and add the
+		// loading class so users can assume that
+		// something is loading. Also add the class
+		// mb-3 to provide some margin to the bottom.
 		const li = document.createElement("li");
 		li.classList.add("loading", "mb-3");
+
 		const article = document.createElement("article");
 		article.id = id;
+
 		li.appendChild(article);
+		
 		document.querySelector("#result > ol").appendChild(li);
 
 		xmlhttp.open(

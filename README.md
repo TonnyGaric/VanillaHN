@@ -5,7 +5,9 @@ The goal of this project is to become a [Baseline PWA](https://developers.google
 
 Once that is achieved, the goal is to take it a step further and become an [Exemplary PWA](https://developers.google.com/web/progressive-web-apps/checklist#exemplary), again, by using only plain (vanilla) JavaScript.
 
-![](https://tonnygaric.com/content/3-projects/vanillahn/vanillahn-cover.png)
+See a live demo of the latest version on https://tonnygaric.com/vanillahn
+
+![](https://tonnygaric.com/content/3-projects/1-vanillahn/vanillahn-cover.png)
 
 ## Getting Started
 ### Prerequisites
